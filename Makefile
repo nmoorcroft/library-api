@@ -8,13 +8,16 @@ node_modules:
 	npm install
 
 server: test
-	node server/index.js
+	npm start
 
 test: node_modules
 	$(ISTANBUL) cover ./node_modules/.bin/_mocha -- test/ -R spec
 
 report: test
 	open coverage/lcov-report/index.html
+
+clean:
+	$(RM) -r node_modules
 
 .PHONY: test server report
 

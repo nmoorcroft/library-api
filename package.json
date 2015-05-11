@@ -2,14 +2,8 @@
   "name": "library",
   "version": "1.0.0",
   "scripts": {
-    "start": "node src/server.js",
+    "start": "node server/index.js",
     "test": "mocha"
-  },
-  "config": {
-    "blanket": {
-      "pattern": "src",
-      "data-cover-never": "node_modules"
-    }
   },
   "dependencies": {
     "body-parser": "^1.11.0",

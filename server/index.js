@@ -18,10 +18,16 @@ require('./mongodb')(nconf.get('mongodb'));
 // configure controllers and routes
 app.use(nconf.get('base_uri'), require('./controllers'));
 
+// catch uncaught exceptions
+process.on('uncaughtException', function (err) {
+    console.log('uncaughtException: ' + err.stack);
+});
+
 // start http server
 var port = nconf.get('port');
-app.listen(port, function () {
-    console.log('Started server, listening on port ' + port + '..');
+app.listen(port, function (err) {
+    if (err) console.log('Failed to start server, ' + err);
+    else console.log('Started server, listening on port ' + port + '..');
 });
 
 
