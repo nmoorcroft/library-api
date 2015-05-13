@@ -18,7 +18,7 @@ describe('customers api', function () {
         });
     });
 
-    it('should retrieve all books in the library', function (done) {
+    it('should retrieve all customers of the library', function (done) {
         createCustomer('neil')
             .then(createCustomer('tom'))
             .then(function () {

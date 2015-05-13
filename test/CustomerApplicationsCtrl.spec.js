@@ -16,7 +16,7 @@ describe('customer applications api', function () {
         mockBus = new MockServiceBus();
         var router = proxyquire('../server/controllers/CustomerApplicationsCtrl', {
             'servicebus': {
-                bus: function() {
+                bus: function () {
                     return mockBus;
                 }
             }
@@ -31,7 +31,7 @@ describe('customer applications api', function () {
     });
 
     it('should create a customer application', function (done) {
-        var application = {name: "Neil Moorcroft", dob: "1974-2-21"};
+        var application = {name: 'Neil Moorcroft', dob: '1974-2-21'};
         request(app).post('/api/customer-applications')
             .set('Content-Type', 'application/json')
             .send(application)
@@ -40,10 +40,10 @@ describe('customer applications api', function () {
                 if (err) throw err;
                 db.CustomerApplication.find({}, function (err, applications) {
                     assert.equal(applications.length, 1);
-                    assert.equal(applications[0].name, "Neil Moorcroft");
+                    assert.equal(applications[0].name, 'Neil Moorcroft');
                     assert.deepEqual(applications[0].dob, new Date('1974-2-21'));
-                    assert.equal(applications[0].status, "application-received");
-                    assert.equal(mockBus.event, "library.customer-application");
+                    assert.equal(applications[0].status, 'application-received');
+                    assert.equal(mockBus.event, 'library.customer-application');
                     assert.deepEqual(mockBus.obj._id, applications[0]._id);
                     done(err);
                 });
@@ -52,8 +52,22 @@ describe('customer applications api', function () {
 
     });
 
+    it('should block applications for under 12s', function (done) {
+        var application = {name: 'Tom Moorcroft', dob: '2005-05-11'};
+        request(app).post('/api/customer-applications')
+            .set('Content-Type', 'application/json')
+            .send(application)
+            .expect(400)
+            .end(function (err) {
+                if (err) throw err;
+                db.CustomerApplication.find({}, function (err, applications) {
+                    assert.equal(applications.length, 0);
+                    done(err);
+                });
 
+            });
 
+    });
 
 });
 

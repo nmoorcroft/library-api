@@ -12,10 +12,5 @@ MockServiceBus.prototype.send = function (event, obj) {
 };
 
 
-MockServiceBus.prototype.listen = function (event, callback) {
-    this.event = event;
-    this.callback = callback;
-};
-
 module.exports = MockServiceBus;
 
