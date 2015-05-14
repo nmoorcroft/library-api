@@ -76,7 +76,33 @@ describe('customer applications api', function () {
 
     });
 
+    it('should get customer applications', function (done) {
+        createApplication('Neil', new Date()).then(createApplication('Tom', new Date())).then(function() {
+            request(app).get('/api/customer-applications')
+                .expect(200)
+                .expect(function (res) {
+                    assert.equal(res.body.length, 2);
+                    assert.ok(_.find(res.body, _.matchesProperty('name', 'Neil')));
+                    assert.ok(_.find(res.body, _.matchesProperty('name', 'Tom')));
+                })
+                .end(done);
+
+        });
+
+    });
+
     // todo: write test with invalid time
+
+    function createApplication(name, dob) {
+        return new db.CustomerApplication({
+            name: name,
+            dob: dob,
+            applicationDate: new Date(),
+            status: 'application-received'
+
+        }).save();
+
+    }
 
 });
 

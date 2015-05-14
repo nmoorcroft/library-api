@@ -24,6 +24,12 @@ router.post('/customer-applications', function (req, res) {
     }
 });
 
+router.get('/customer-applications', function (req, res) {
+    CustomerApplication.find().then(function (applications) {
+        res.status(200).send(applications);
+    });
+});
+
 function asApplication(req) {
     var application = new CustomerApplication();
     application.name = req.name;
