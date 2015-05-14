@@ -13,12 +13,13 @@ router.post('/customer-applications', function (req, res) {
         res.status(400).send('library customers must be aged 12 or over');
 
     } else {
-        application.save(function (err, saved) {
-            if (err) res.status(500).send(err);
-            else {
-                bus.send('library.customer-application', saved);
-                res.status(201).send('/customer-applications/' + saved.id);
-            }
+        application.save().then(function (saved) {
+            bus.send('library.customer-application', saved);
+            res.status(201).send('/customer-applications/' + saved.id);
+
+        }, function (err) {
+            res.status(400).send(err);
+
         });
     }
 });

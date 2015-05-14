@@ -14,8 +14,7 @@ describe('books api', function () {
         init.mongo().then(function () {
             app = init.app(require('../server/controllers/BooksCtrl'));
             db = require('../server/model');
-            done();
-        });
+        }).then(done);
     });
 
     it('should retrieve all books in the library', function (done) {
@@ -23,12 +22,12 @@ describe('books api', function () {
             .then(createBook('book2'))
             .then(function () {
                 request(app).get('/api/books')
+                    .expect(200)
                     .expect(function (res) {
                         assert.equal(res.body.length, 2);
                         assert.ok(_.find(res.body, _.matchesProperty('name', 'book1')));
                         assert.ok(_.find(res.body, _.matchesProperty('name', 'book2')));
                     })
-                    .expect(200)
                     .end(done);
             });
 
@@ -69,23 +68,31 @@ describe('books api', function () {
             .send(book)
             .expect(201)
             .end(function (err) {
-                if (err) throw err;
-                db.Book.find({}, function (err, books) {
+                if (err) done(err);
+                db.Book.find(function (err, books) {
                     assert.equal(books.length, 1);
                     assert.equal(books[0].name, 'new book');
                     done(err);
+
                 });
 
             });
 
     });
 
+    it('should return 400 for invalid post', function (done) {
+        var book = {};
+        request(app).post('/api/books')
+            .set('Content-Type', 'application/json')
+            .send(book)
+            .expect(400)
+            .end(done);
+
+    });
+
+
     function createBook(name) {
-        var deferred = Q.defer();
-        new db.Book({name: name}).save(function (err, obj) {
-            deferred.resolve(obj);
-        });
-        return deferred.promise;
+        return new db.Book({name: name}).save();
     }
 
 

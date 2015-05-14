@@ -14,19 +14,16 @@ describe('customer applications api', function () {
 
     beforeEach(function (done) {
         mockBus = new MockServiceBus();
-        var router = proxyquire('../server/controllers/CustomerApplicationsCtrl', {
-            'servicebus': {
-                bus: function () {
-                    return mockBus;
-                }
-            }
-        });
-
         init.mongo().then(function () {
-            app = init.app(router);
+            app = init.app(proxyquire('../server/controllers/CustomerApplicationsCtrl', {
+                'servicebus': {
+                    bus: function () {
+                        return mockBus;
+                    }
+                }
+            }));
             db = require('../server/model');
-            done();
-        });
+        }).then(done);
 
     });
 
@@ -68,6 +65,18 @@ describe('customer applications api', function () {
             });
 
     });
+
+    it('should return 400 for invalid applications', function (done) {
+        var application = {dob:'1974-02-01'};
+        request(app).post('/api/customer-applications')
+            .set('Content-Type', 'application/json')
+            .send(application)
+            .expect(400)
+            .end(done);
+
+    });
+
+    // todo: write test with invalid time
 
 });
 

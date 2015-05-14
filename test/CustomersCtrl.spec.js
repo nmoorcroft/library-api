@@ -14,8 +14,7 @@ describe('customers api', function () {
         init.mongo().then(function () {
             app = init.app(require('../server/controllers/CustomersCtrl'));
             db = require('../server/model');
-            done();
-        });
+        }).then(done);
     });
 
     it('should retrieve all customers of the library', function (done) {
@@ -35,11 +34,7 @@ describe('customers api', function () {
     });
 
     function createCustomer(name) {
-        var deferred = Q.defer();
-        new db.Customer({name: name}).save(function(err, obj) {
-            deferred.resolve(obj);
-        });
-        return deferred.promise;
+        return new db.Customer({name: name}).save();
     }
 
 

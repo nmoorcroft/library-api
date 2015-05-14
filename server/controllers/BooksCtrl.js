@@ -6,9 +6,8 @@ var db = require('../model');
 var Book = db.Book;
 
 router.get('/books', function (req, res) {
-    Book.find({}, function (err, books) {
-        if (err) res.status(500).send(err);
-        else res.status(200).json(books.map(asHal));
+    Book.find().then(function (books) {
+        res.status(200).json(books.map(asHal));
     });
 });
 
@@ -17,20 +16,21 @@ router.get('/books/:id', function (req, res) {
         res.status(404).send('invalid book id');
 
     } else {
-        Book.findById(req.params.id, function (err, book) {
-            if (err) res.status(500).send(err);
-            else if (!book) res.status(404).send('book not found');
+        Book.findById(req.params.id).then(function (book) {
+            if (!book) res.status(404).send('book not found');
             else res.status(200).json(asHal(book));
         });
-
     }
 });
 
 router.post('/books', function (req, res) {
     var book = new Book(req.body);
-    book.save(function (err, saved) {
-        if (err) res.status(500).send(err);
-        else res.status(201).send('/books/' + saved.id);
+    book.save().then(function (saved) {
+        res.status(201).send('/books/' + saved.id);
+
+    }, function (err) {
+        res.status(400).send(err);
+
     });
 
 });
