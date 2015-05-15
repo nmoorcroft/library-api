@@ -40,6 +40,7 @@ function asApplication(req) {
 }
 
 function ageFor(dob) {
+    if (!dob) return null;
     var ageInMills = Date.now() - dob.getTime();
     var ageDate = new Date(ageInMills); // miliseconds from epoch
     return Math.abs(ageDate.getUTCFullYear() - 1970);

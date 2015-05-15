@@ -91,7 +91,16 @@ describe('customer applications api', function () {
 
     });
 
-    // todo: write test with invalid time
+    it('should return 400 for invalid application with invalid date', function (done) {
+        var application = {};
+        request(app).post('/api/customer-applications')
+            .set('Content-Type', 'application/json')
+            .send(application)
+            .expect(400)
+            .end(done);
+
+    });
+
 
     function createApplication(name, dob) {
         return new db.CustomerApplication({
