@@ -4,7 +4,6 @@ var logger = require('winston');
 var express = require('express');
 var router = express.Router();
 var db = require('../model');
-var bus = require('servicebus').bus();
 var CustomerApplication = db.CustomerApplication;
 
 router.post('/customer-applications', function (req, res) {
@@ -14,7 +13,6 @@ router.post('/customer-applications', function (req, res) {
 
     } else {
         application.save().then(function (saved) {
-            bus.send('library.customer-application', saved);
             res.status(201).send('/customer-applications/' + saved.id);
 
         }, function (err) {

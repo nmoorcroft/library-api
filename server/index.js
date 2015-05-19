@@ -3,7 +3,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var nconf = require('nconf');
-var bus = require('servicebus').bus();
 var app = express();
 
 // support json
@@ -19,11 +18,10 @@ require('./mongodb')(nconf.get('mongodb'));
 // configure controllers and routes
 app.use(nconf.get('base_uri'), require('./controllers'));
 
-// initialize CustomerApplicationService
-var customerApplicationService = require('./services/CustomerApplicationsService');
-bus.listen('library.customer-application', function (event) {
-    customerApplicationService(event._id);
-});
+// setup CustomerApplicationService
+setInterval(function() {
+    require('./services/CustomerApplicationsService')();
+}, 500);
 
 // catch uncaught exceptions
 process.on('uncaughtException', function (err) {

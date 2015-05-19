@@ -20,9 +20,9 @@ describe('customer applications service', function () {
     });
 
     it('should process customer application message', function (done) {
-        createApplication('Neil', Date.parse('1974-2-21')).then(function (application) {
-            customerApplicationsService(application._id).then(function () {
-                Q.all([findApplications(), findCustomers()]).then(function (results) {
+        createApplication('Neil', Date.parse('1974-2-21')).then(function () {
+            customerApplicationsService().then(function () {
+                Q.all([findApplications(), findCustomers()]).done(function (results) {
                     var applications = results[0];
                     var customers = results[1];
                     assert.equal(customers.length, 1);

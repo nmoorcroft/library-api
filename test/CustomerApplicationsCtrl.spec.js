@@ -15,13 +15,7 @@ describe('customer applications api', function () {
     beforeEach(function (done) {
         mockBus = new MockServiceBus();
         init.mongo().then(function () {
-            app = init.app(proxyquire('../server/controllers/CustomerApplicationsCtrl', {
-                'servicebus': {
-                    bus: function () {
-                        return mockBus;
-                    }
-                }
-            }));
+            app = init.app(require('../server/controllers/CustomerApplicationsCtrl'));
             db = require('../server/model');
         }).then(done);
 
@@ -40,8 +34,6 @@ describe('customer applications api', function () {
                     assert.equal(applications[0].name, 'Neil Moorcroft');
                     assert.deepEqual(applications[0].dob, new Date('1974-2-21'));
                     assert.equal(applications[0].status, 'application-received');
-                    assert.equal(mockBus.event, 'library.customer-application');
-                    assert.deepEqual(mockBus.obj._id, applications[0]._id);
                     done(err);
                 });
 
