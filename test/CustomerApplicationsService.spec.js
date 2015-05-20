@@ -20,19 +20,23 @@ describe('customer applications service', function () {
     });
 
     it('should process customer application message', function (done) {
-        createApplication('Neil', Date.parse('1974-2-21')).then(function () {
-            customerApplicationsService().then(function () {
-                Q.all([findApplications(), findCustomers()]).done(function (results) {
-                    var applications = results[0];
-                    var customers = results[1];
-                    assert.equal(customers.length, 1);
-                    assert.equal(customers[0].name, 'Neil');
-                    assert.equal(applications[0].status, 'complete');
-                    done();
+        createApplication('Neil', Date.parse('1974-2-21'))
+            .then(createApplication('Tom', Date.parse('1974-2-21')))
+            .then(function () {
+                customerApplicationsService.process().then(function () {
+                    Q.all([findApplications(), findCustomers()]).done(function (results) {
+                        var applications = results[0];
+                        var customers = results[1];
+                        assert.equal(customers.length, 2);
+                        assert.equal(customers[0].name, 'Neil');
+                        assert.equal(customers[1].name, 'Tom');
+                        assert.equal(applications[0].status, 'complete');
+                        assert.equal(applications[1].status, 'complete');
+                        done();
+
+                    });
 
                 });
-
-            });
 
         });
     });

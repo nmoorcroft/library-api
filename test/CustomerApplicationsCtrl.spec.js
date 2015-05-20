@@ -76,6 +76,7 @@ describe('customer applications api', function () {
                     assert.equal(res.body.length, 2);
                     assert.ok(_.find(res.body, _.matchesProperty('name', 'Neil')));
                     assert.ok(_.find(res.body, _.matchesProperty('name', 'Tom')));
+                    assert.ok(_.find(res.body, _.matchesProperty('status', 'application-received')));
                 })
                 .end(done);
 

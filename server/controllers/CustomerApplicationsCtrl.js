@@ -1,6 +1,5 @@
 'use strict';
 
-var logger = require('winston');
 var express = require('express');
 var router = express.Router();
 var db = require('../model');

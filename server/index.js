@@ -20,7 +20,7 @@ app.use(nconf.get('base_uri'), require('./controllers'));
 
 // setup CustomerApplicationService
 setInterval(function() {
-    require('./services/CustomerApplicationsService')();
+    require('./services/CustomerApplicationsService').process();
 }, 500);
 
 // catch uncaught exceptions

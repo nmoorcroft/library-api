@@ -16,14 +16,21 @@ function updateStatus(application) {
     return application.save();
 }
 
-module.exports = function () {
-    var updates = [];
+function completeApplication(application) {
+    return Q.allSettled([createCustomer(application), updateStatus(application)]);
+}
+
+module.exports.process = function () {
+    var deferred = Q.defer();
     CustomerApplication.find({'status': 'application-received'}).then(function (applications) {
-        _.each(applications, function (application) {
-            updates.push(Q.all([createCustomer(application), updateStatus(application)]));
+        var updates = [];
+        _.each(applications, function(application) {
+            updates.push(completeApplication(application));
         });
+        Q.allSettled(updates).then(deferred.resolve);
+
     });
-    return Q.all(updates);
+    return deferred.promise;
 
 };
 
