@@ -6,19 +6,12 @@ var db = require('../model');
 var CustomerApplication = db.CustomerApplication;
 
 router.post('/customer-applications', function (req, res) {
-    var application = asApplication(req.body);
-    if (ageFor(application.dob) < 12) {
-        res.status(400).send('library customers must be aged 12 or over');
-
-    } else {
-        application.save().then(function (saved) {
-            res.status(201).send('/customer-applications/' + saved.id);
-
-        }, function (err) {
-            res.status(400).send(err);
-
-        });
-    }
+    newApplication(req.body).save().then(function (saved) {
+        res.status(201).send('/customer-applications/' + saved.id);
+    }, function (err) {
+        console.log(err.stack);
+        res.status(400).send(err);
+    });
 });
 
 router.get('/customer-applications', function (req, res) {
@@ -27,20 +20,13 @@ router.get('/customer-applications', function (req, res) {
     });
 });
 
-function asApplication(req) {
+function newApplication(req) {
     var application = new CustomerApplication();
     application.name = req.name;
     application.dob = Date.parse(req.dob);
     application.applicationDate = new Date();
-    application.status = 'application-received';
+    application.status = 'processing';
     return application;
-}
-
-function ageFor(dob) {
-    if (!dob) return null;
-    var ageInMills = Date.now() - dob.getTime();
-    var ageDate = new Date(ageInMills); // miliseconds from epoch
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
 
 module.exports = router;

@@ -5,13 +5,12 @@ var Schema = mongoose.Schema;
 
 var customerSchema = new Schema({
     name: {type: String, required: true},
+    address: {type: String},
     dob: {type: Date, required: true},
     applicationDate: {type: Date, required: true},
     status: {type: String, required: true}
-
 });
 
 module.exports = mongoose.model('CustomerApplication', customerSchema);
-
 
 

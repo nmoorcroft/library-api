@@ -6,7 +6,6 @@ var Customer = db.Customer;
 var _ = require('lodash');
 var Q = require('q');
 
-
 function createCustomer(application) {
     return new Customer({name: application.name}).save();
 }

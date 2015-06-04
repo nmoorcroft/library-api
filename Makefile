@@ -7,7 +7,7 @@ all: server
 node_modules:
 	npm install
 
-server: test
+serve: test
 	npm start
 
 test: node_modules

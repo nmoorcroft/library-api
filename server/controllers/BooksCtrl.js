@@ -29,6 +29,7 @@ router.post('/books', function (req, res) {
         res.status(201).send('/books/' + saved.id);
 
     }, function (err) {
+        console.log(err.stack);
         res.status(400).send(err);
 
     });
@@ -44,7 +45,9 @@ function asHal(book) {
             loans: {href: self + '/loans'}
         },
         id: id,
-        name: book.name
+        title: book.title,
+        description: book.description,
+        author: book.author
     }
 }
 

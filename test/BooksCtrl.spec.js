@@ -18,31 +18,28 @@ describe('books api', function () {
     });
 
     it('should retrieve all books in the library', function (done) {
-        createBook('book1')
-            .then(createBook('book2'))
-            .then(function () {
-                request(app).get('/api/books')
-                    .expect(200)
-                    .expect(function (res) {
-                        assert.equal(res.body.length, 2);
-                        assert.ok(_.find(res.body, _.matchesProperty('name', 'book1')));
-                        assert.ok(_.find(res.body, _.matchesProperty('name', 'book2')));
-                    })
-                    .end(done);
-            });
+        createSampleBooks().then(function () {
+            request(app).get('/api/books')
+                .expect(200)
+                .expect(function (res) {
+                    assert.equal(res.body.length, 2);
+                    assert.ok(_.find(res.body, _.matchesProperty('title', 'Domain-Driven Design')));
+                    assert.ok(_.find(res.body, _.matchesProperty('title', 'Test-Driven Development')));
+                })
+                .end(done);
+        });
 
     });
 
     it('should retrieve a book by id', function (done) {
-        createBook('book1')
-            .then(function (book) {
-                request(app).get('/api/books/' + book._id)
-                    .expect(function (res) {
-                        assert.equal(res.body.name, 'book1');
-                        assert.equal(res.body.id, book._id);
-                    })
-                    .expect(200)
-                    .end(done);
+        createSampleBooks().then(function (books) {
+            request(app).get('/api/books/' + books[0]._id)
+                .expect(function (res) {
+                    assert.equal(res.body.title, books[0].title);
+                    assert.equal(res.body.id, books[0]._id);
+                })
+                .expect(200)
+                .end(done);
         });
 
     });
@@ -62,7 +59,7 @@ describe('books api', function () {
     });
 
     it('should add a new book to the library', function (done) {
-        var book = {name: "new book"};
+        var book = {title: 'Refactoring: Improving the Design of Existing Code', author: 'Martin Fowler'};
         request(app).post('/api/books')
             .set('Content-Type', 'application/json')
             .send(book)
@@ -71,7 +68,7 @@ describe('books api', function () {
                 if (err) done(err);
                 db.Book.find(function (err, books) {
                     assert.equal(books.length, 1);
-                    assert.equal(books[0].name, 'new book');
+                    assert.equal(books[0].title, 'Refactoring: Improving the Design of Existing Code');
                     done(err);
 
                 });
@@ -90,9 +87,15 @@ describe('books api', function () {
 
     });
 
+    function createSampleBooks() {
+        return Q.all([
+            createBook('Domain-Driven Design', 'Eric Evans'),
+            createBook('Test-Driven Development', 'Kent Beck')
+        ]);
+    }
 
-    function createBook(name) {
-        return new db.Book({name: name}).save();
+    function createBook(title, author) {
+        return new db.Book({title: title, author: author}).save();
     }
 
 

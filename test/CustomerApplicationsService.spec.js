@@ -5,7 +5,6 @@ var _ = require('lodash');
 var request = require('supertest');
 var assert = require('chai').assert;
 var init = require('./helpers/setup');
-var proxyquire = require('proxyquire');
 
 describe('customer applications service', function () {
 
